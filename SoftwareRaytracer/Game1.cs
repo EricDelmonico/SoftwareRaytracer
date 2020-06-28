@@ -12,9 +12,16 @@ namespace SoftwareRaytracer
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        public static double aspectRatio = 16.0 / 9.0;
+        public static int ImageWidth = 100;
+        public static int ImageHeight = (int)(ImageWidth / aspectRatio);
+        private Texture2D image;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+            graphics.PreferredBackBufferWidth = ImageWidth;
+            graphics.PreferredBackBufferHeight = ImageHeight;
             Content.RootDirectory = "Content";
         }
 
@@ -27,6 +34,18 @@ namespace SoftwareRaytracer
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+
+            Color[] colors = new Color[ImageWidth * ImageHeight];
+            for (int i = 0; i < ImageHeight; i++)
+            {
+                for (int j = 0; j < ImageWidth; j++)
+                {
+                    colors[i * ImageWidth + j] = new Color((float)i / ImageHeight, (float)(i / ImageHeight), 0);
+                }
+            }
+            SaveBitmap.Save(ImageWidth, ImageHeight, colors);
+            image = new Texture2D(GraphicsDevice, ImageWidth, ImageHeight);
+            image.SetData(colors);
 
             base.Initialize();
         }
@@ -76,6 +95,11 @@ namespace SoftwareRaytracer
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            spriteBatch.Begin();
+
+            spriteBatch.Draw(image, new Rectangle(0, 0, ImageWidth, ImageHeight), Color.White);
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
